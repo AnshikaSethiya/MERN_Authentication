@@ -1,5 +1,5 @@
  const mongoose = require('mongoose');
- const bcrypt = require('bcryptjs')
+ const bcrypt = require('bcrypt')
 
  const UserSchema = new mongoose.Schema({
      username: {
@@ -14,9 +14,9 @@
              "Please Provide a valid email"    
          ]
      },
-     Contact:{
+     contact:{
         type:Number,
-        required:[true,"Please PRovide Contact Number"],
+        required:[true,"Please Provide Contact Number"],
         minlength:10,
         maxlength:10
      },
@@ -37,9 +37,11 @@ UserSchema.pre("save", async function(next){
     }  
 
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcyrpt.hash(this.password, salt)
+    this.password = await bcrypt.hash(this.password, salt)
     next();
 })
+
+UserSchema.methods.matchPasswords = async
 
  const User = mongoose.model("User", UserSchema)
 

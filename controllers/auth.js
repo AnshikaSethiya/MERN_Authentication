@@ -8,18 +8,17 @@ exports.register = async (req,res,next) => {
             username,
             email,
             contact,
-            passsword,
-        })
-
+            password,
+        });
         res.status(201).json({
             success:true,
             user,
-        })
+        });
     } catch (error) {
         res.status(500).json({
             success:false,
             error:error.message,
-        })
+        });
     }
 };
 
