@@ -1,23 +1,21 @@
-const User = require('../model/User');
+const Test_user = require('../model/User');
 const ErrorResponse = require('../utils/errorResponse');
 
 exports.register = async (req,res,next) => {
     const { username, email, contact, password } = req.body;
 
     try {
-        const user = await User.create({
+        const user = await Test_user.create({
             username,
             email,
             contact,
             password,
         });
-        res.status(201).json({
-            success:true,
-            user,
-        });
+        sendToken(user, 201, res)
     } catch (error) {
-       next(error)
-    }
+        next(error);
+       console.log("Error in signin: ", error);
+    } 
 };
 
 exports.login = async (req,res,next) => {
@@ -28,7 +26,7 @@ exports.login = async (req,res,next) => {
     }
 
     try {
-        const user = await User.findOne({email}).select("+password");
+        const user = await Test_user.findOne({email}).select("+password");
 
         if(!user){
             return next(new ErrorResponse("Invalid Credentials", 401))
@@ -39,11 +37,7 @@ exports.login = async (req,res,next) => {
         if(!isMatch){
             return next(new ErrorResponse("Invalid Credentials", 401))
         }
-
-        res.status(200).json({
-            success:true,
-            token:"authenticate",
-        })
+        sendToken(user, 200, res)
     } catch (error) {
         res.status(500).json({success:false,error:error.message})
     }
@@ -56,3 +50,8 @@ exports.forgotpassword = (req,res,next) => {
 exports.resetpasssword = (req,res,next) => {
     res.send('Reset password Route');
 };
+
+const sendToken = (user, statusCode, res) => {
+    const token = user.getSignedToken();
+    res.status(statusCode).json({success:true, token})
+}
